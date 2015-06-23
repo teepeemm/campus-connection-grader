@@ -1,0 +1,98 @@
+html {
+    background-color: hsl(60,15%,90%);
+    padding: 2ex 10%;
+    line-height: 1.3;
+    font-size: 16px;
+}
+
+body {
+    background-color: white;
+    padding: 2ex 3em;
+}
+
+div.accordion {
+    font-size: 90%;
+}
+
+.accordion div.ui-accordion-content {
+    padding: 1ex;
+}
+.accordion div.ui-accordion-content>* {
+    margin: 1ex;
+}
+
+#testingAccordion .Chrome+div ol {
+    margin-top: 0;
+}
+
+ol>li {
+    list-style-type: upper-roman;
+}
+
+ol ol>li, div.accordion ol>li {
+    list-style-type: decimal;
+}
+
+#disclaimer {
+    clear: both;
+}
+
+img {
+    max-width: 90%;
+    height: auto;
+}
+
+img.boxed {
+    margin: 1ex;
+    border: 1px solid black;
+    padding: 1ex;
+}
+
+img.chromeMenu {
+    position: relative;
+    top: 15px;
+}
+
+img.page_icon {
+    margin: 0 .3em;
+    border: 1px solid black;
+    padding: .3ex;
+    width: 19px;
+    height: 19px;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd+dt {
+    margin-top: 2ex;
+}
+
+#installAccordion h3.Chrome+div a~a, #installAccordion h3.OPR+div a {
+    margin: 0;
+}
+#installAccordion h3.Chrome+div a~a {
+    white-space: nowrap;
+}
+
+.last-mod {
+    font-size: xx-small;
+}
+
+/* mobile accessibility */
+
+@media (max-width:500px) {
+    .accordion h3 ~ h3, #mainThings li ~ li {
+	margin-top: 5mm;
+    }
+    html {
+	padding: 1ex;
+    }
+    body {
+	padding: 1ex;
+    }
+    ol, ul {
+	padding-left: 1em;
+    }
+}

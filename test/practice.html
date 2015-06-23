@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Practice Grade Uploading</title>
+  <meta charset="utf-8">
+  <style type="text/css">
+    body {
+        min-width: 70em;
+        min-height: 70ex;
+    }
+    .fakerow, select, button, label {
+        display: none;
+    }
+    #WAIT_win0 {
+        display: none;
+        position: absolute;
+        right: 2em;
+        top: 2ex;
+    }
+    p, #instructions {
+        width: 30em;
+    }
+    #instructions {
+        position: absolute;
+        right: 2em;
+        top: 4ex;
+    }
+    #instructions li {
+        margin: 1ex 0;
+    }
+    img {
+        margin: 0 .5ex;
+        border: 1px solid black;
+        padding: .3ex;
+    }
+    table {
+        margin: 2ex 2em;
+        overflow-y: auto;
+        border-collapse: collapse;
+    }
+    table td, table th {
+        margin: 0;
+        border: 1px solid black;
+        padding: .5ex .5em;
+    }
+    #arrow {
+        font-size: 300%;
+        line-height: 0;
+    }
+  </style>
+ </head>
+ <body>
+  <h1>Practice Campus Connection</h1>
+  <div id="WAIT_win0">Waiting</div>
+  <p>
+   This page pretends to be a Campus Connection grade roster,
+   displaying the grades that would have been entered.<br>
+   If Campus Connection grade rosters are not available,
+   you can use this page instead.
+  </p>
+  <div id="instructions">
+   <h2>Instructions</h2>
+   <ul>
+    <li>
+     Click the
+     <img src="images/page-icon-19.png" alt="ABCDFISU">
+     at the top right <span id="arrow">&#8663;</span>
+     to get started.
+    </li>
+    <li>
+     Click &quot;Choose File&quot; to see if a .csv file will upload
+     properly to Campus Connection.
+    </li>
+    <li>
+     If a Blackboard Grade Center is open, choose
+     &quot;Download Grades&quot; to download a .csv file that could
+     be uploaded to Campus Connection.
+    </li>
+    <li>
+     Or choose &quot;Transfer Grades&quot; to see what grades will
+     transfer directly from Blackboard to Campus Connection without
+     saving a .csv file as an intermediary.
+    </li>
+   </ul>
+   <p>
+    <a target="_blank"
+    href="http://arts-sciences.und.edu/math/faculty/timothy-prescott/ccg/"
+    >Further instructions</a>.
+   </p>
+  </div>
+  <button id="DERIVED_AA2_SAVE_PB">Save</button>
+  <select id="DERIVED_SR_GRD_RSTR_TYPE_SEQ">
+   <option>Mid Term Grades</option>
+   <option>Final Grades</option>
+  </select>
+  <form>
+   <label>
+    Display unassigned
+    <input type="checkbox" id="DERIVED_SR_RSTR_DSP_UNGRD_ONLY$0">
+   </label>
+   <h2>Loaded Grades</h2>
+   <table id="GRADE_ROSTER_plus_other_stuff">
+    <tr>
+     <th>#<select></select></th>
+     <th>Student ID# or email</th>
+     <th>Grade</th>
+    </tr>
+    <tr class="fakerow"><td></td><td></td><td></td></tr>
+    <tr class="fakerow">
+     <td colspan="3">
+      <a id="GRADE_ROSTER$fviewall$0">View All</a>
+     </td>
+    </tr>
+   </table>
+  </form>
+  <script src="campusConnect.js"></script>
+  <script src="practice.js"></script>
+ </body>
+</html>

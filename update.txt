@@ -1,0 +1,27 @@
+To do:
+* create flowchart of code
+* how many people use it this time
+
+
+To update:
+
+Update version number in user.js
+Provide new version to chrome & opera stores
+
+Chrome:
+https://chrome.google.com/webstore/developer/dashboard
+app id:
+difjakgijdlfdbmnfgkloecfikpiecfn
+url:
+https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn
+
+Opera:
+https://addons.opera.com/en/developer/
+app id:
+neiphapdimjialblhihiiiamefoblppe
+url:
+https://addons.opera.com/en/extensions/details/campus-connection-grader/
+
+
+Development extension:
+https://chrome.google.com/webstore/detail/gkjlobeiicbkomfoebemkbebdnaojiph/

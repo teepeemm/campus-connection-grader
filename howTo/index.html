@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Automated Grade Entry in NDUS's Campus Connection</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="chrome-webstore-item" href=
+   "https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn"
+  >
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src=
+   "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"
+  ></script>
+  <script src=
+   "https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"
+  ></script>
+  <script type="text/javascript">
+window.$ && $(function() {
+    $(".accordion").accordion({collapsible:true,active:false,
+                               heightStyle:"content",animate:false});
+    var b = $.grep(["OPR","Opera","Chrome"],function(ua) {
+            return navigator.userAgent.indexOf(ua) >= 0;
+        })[0] || "Other";
+    // Order matters ["MSIE","OPR","Opera","Firefox","Chrome","Safari"]
+    $("."+b).click();
+    $(".accordion").accordion("option","animate",{});
+    // back to the default
+    $("#installAccordion h3.Chrome+div a~a").click(function(event) {
+        event.preventDefault();
+        chrome.webstore.install();
+    });
+});
+  </script>
+ </head>
+
+ <body>
+  <h1>
+   Automated Grade Entry in NDUS's Campus Connection
+   (<a href="#disclaimer">Beta</a>)
+  </h1>
+  <p>
+   These are instructions for using the Google Chrome extension
+   Campus Connection Grader to automatically enter grades
+   into the NDUS system.
+  </p>
+  <p>There are three things you can do:</p>
+  <ol id="mainThings">
+   <li>
+    Download a <code>.csv</code> file from Blackboard with your
+    students' information and &quot;External Grade&quot;
+    (<a href="#createCSV">in detail</a>).
+   </li>
+   <li>
+    Upload a <code>.csv</code> file to Campus Connection with your
+    students' EmplId (or username) and &quot;External Grade&quot;
+    (<a href="#upload">in detail</a>).
+   </li>
+   <li>
+    Do both at once: transfer your students'
+    &quot;External Grade&quot; from Blackboard to Campus Connection
+    (<a href="#transfer">in detail</a>).
+   </li>
+  </ol>
+  <p>
+   To start each of these, load the appropriate webpage(s) and click
+   the
+   <img class="page_icon" src="images/page-icon-19.png"
+   alt="ABCDFISU" width="19" height="19">
+   that appears at the right of the address bar.<br>
+   <img src="images/popup.gif" alt="Popup window."
+   class="boxed" width="464" height="186">
+  </p>
+
+  <h2>Installation</h2>
+  <div class="accordion" id="installAccordion">
+  <!--
+   <h3 class="Firefox">Firefox</h3>
+   <div>
+    Available in
+    <a href=
+    "https://addons.mozilla.org/en-US/firefox/addon/campus-connection-grader/"
+    target="_blank">Firefox add-ons</a>.
+    (This version is currently not working correctly.
+    Try a different browser.)
+   </div>
+   -->
+   <h3 class="Chrome">Google Chrome</h3>
+   <div>
+    <a href=
+    "https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn"
+    ><img alt="Available in the chrome web store"
+    src="images/chrome-web-store.png" width="206" height="58"></a>
+    or <a href=
+    "https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn"
+    >install
+    immediately</a>.
+   </div>
+   <!--
+   <h3 class="OPR Opera">Opera</h3>
+   <div>
+    Available in
+    <a href=
+    "https://addons.opera.com/en/extensions/details/campus-connection-grader/"
+    >Opera add-ons</a>
+    (needs version 15 or later to work).
+   </div>
+   -->
+   <!--
+   <h3 class="Safari">Safari</h3>
+   <div>
+    Download and open the
+    <a href="http://www.und.edu/instruct/tprescott/ccg/campus-connection-grader.safariextz">Safari extension</a>
+    (needs version 6 or later to work).
+    (This version is currently not working correctly.
+    Try a different browser.)
+   </div>
+   -->
+   <h3 class="Other">Other browsers</h3>
+   <div>
+    With sufficient demand, it should be possible to create a version
+    for Firefox, Opera or Safari.<br>
+    With sufficient demand and support, it
+    might be possible to create a version for Internet Explorer.
+    <!-- or I try out crossrider -->
+   </div>
+  </div>
+
+  <h2>Step by Step Instructions</h2>
+  <ol>
+   <li id="createCSV">
+    Download a <code>.csv</code> file from Blackboard with your
+    students' information and &quot;External Grade&quot;:
+    <ol>
+     <li>
+      Make sure that your Grade Center has the following columns:
+      <ul>
+       <li>
+        One designated as the External
+        Grade (or named &quot;External Grade&quot;)
+       </li>
+       <li>
+        &quot;Student ID (EMPLID)&quot; or &quot;Username&quot;
+        or both.
+       </li>
+       <li>
+        &quot;Last Name&quot; and &quot;First Name&quot;
+        will also be included if they are present.
+       </li>
+      </ul>
+      (<a href="#help">Help</a>.)
+     </li>
+     <li>
+      Click the
+      <img class="page_icon" src="images/page-icon-19.png"
+      alt="ABCDFISU" width="19" height="19">
+      that appears at the right of the address bar and click
+      &quot;Download&quot;.
+     </li>
+     <li>
+      The webpage will briefly switch into Screen Reader Mode to create
+      the download.
+     </li>
+     <li>Save this file to <code>My Computer</code>.</li>
+    </ol>
+   </li>
+   <li id="upload">
+    Upload a <code>.csv</code> file to Campus Connection with your
+    students' EmplId (or username) and &quot;External Grade&quot;.
+    <ol>
+     <li>
+      Click the
+      <img class="page_icon" src="images/page-icon-19.png"
+      alt="ABCDFISU" width="19" height="19">
+      that appears at the right of the address bar and click
+      &quot;Upload .csv grades&quot;.      
+     </li>
+     <li>Choose the file Blackboard saved to your computer.</li>
+     <li>
+      If you aren't using Blackboard, you can create a spreadsheet
+      with the columns &quot;Student ID&quot; (their EMPL ID)
+      or &quot;Username&quot; (their NDUS user ID)
+      and &quot;External Grade&quot;<br>
+      <img src="images/excel-cols.gif" width="360" height="320"
+      class="boxed" alt="Spreadsheet with desired columns"><br>
+      and save this as a <code>.csv</code> file.<br>
+      <img src="images/excel-save-as.gif" width="537" height="462"
+      class="boxed" alt="File -&gt; Save As..."><br>
+      (<a href="#help">Help</a>.)
+     </li>
+     <li>
+      Change to &quot;Ready To Review&quot; or
+      &quot;Approved&quot; and Save.
+     </li>
+    </ol>
+   </li>
+   <li id="transfer">
+    Do both at once: transfer your students'
+    &quot;External Grade&quot; from Blackboard to Campus Connection.
+    <ol>
+     <li>
+      In separate tabs, open Campus Connection and
+      Blackboard's Grade Center with the appropriate columns.
+     </li>
+     <li>
+      Click the
+      <img class="page_icon" src="images/page-icon-19.png"
+      alt="ABCDFISU" width="19" height="19">
+      that appears at the right of the address bar and click
+      &quot;Transfer grades&quot;.      
+     </li>
+     <li>
+      Change to &quot;Ready To Review&quot; or
+      &quot;Approved&quot; and Save.
+     </li>
+    </ol>
+   </li>
+  </ol>
+
+  <h2>Miscellaneous notes</h2>
+  <ul>
+   <li>
+    Final grades of &quot;U&quot; and &quot;F&quot; are not
+    entered. You will need to distinguish between
+    <ul>
+     <li>&quot;F&quot; (they completed the course),</li>
+     <li>
+      &quot;FN&quot; (they stopped attending &mdash;
+      enter the last date of attendance), and
+     </li>
+     <li>&quot;FNN&quot; (they never attended).</li>
+    </ul>
+   </li>
+   <li>The uploaded grade must be a letter grade.</li>
+   <li>
+    You can include a plus or minus after the grade; it will be ignored.
+   </li>
+   <li>
+    You can include other columns in your <code>.csv</code> file;
+    they will be ignored.
+   </li>
+   <li>
+    If you use &quot;Username&quot; instead of &quot;Student ID&quot;,
+    grades for students from other NDUS campuses may not load.
+   </li>
+   <li>The student names shown above are fictitious.</li>
+   <li>
+    We would appreciate you completing a
+    <a
+    href="https://und.qualtrics.com/SE/?SID=SV_bDDGzH4v9Pf5Qd7">qualtrics
+    survey</a> about this process.
+   </li>
+  </ul>
+
+  <h2>Testing</h2>
+  <p>
+   You can test the extension only when the grading webapges are
+   available.
+   For Blackboard, this is whenever you want, but for Campus
+   Connection, this is only a few weeks at a time.
+   To test that the <code>.csv</code> file will work if Campus
+   Connection is not available:
+  </p>
+  <div class="accordion" id="testingAccordion">
+<!--
+   <h3 class="Firefox">Firefox</h3>
+   <div>
+    <ol>
+     <li>
+      Go to the url <code>about:addons</code> or type
+      <code>ctrl-shift-A</code>.
+     </li>
+     <li>Find this extension in the list.</li>
+     <li>Click &quot;Preferences&quot;.</li>
+    </ol>
+   </div>
+-->
+   <h3 class="Chrome">Google Chrome</h3>
+   <div>
+    <ol>
+     <li>
+      Go to the url <code>chrome://extensions/</code>
+      or click the Chrome Menu
+      <img src="images/chrome-menu.png" class="chromeMenu" alt=""
+      width="29" height="29">,
+      then <strong>Tools</strong>,
+      then <strong>Extensions</strong>.
+     </li>
+     <li>Find this extension in the list.</li>
+     <li>Click &quot;Options&quot;.</li>
+    </ol>
+   </div>
+   <!--
+   <h3 class="OPR Opera">Opera</h3>
+   <div>
+    <ol>
+     <li>
+      Go to the url <code>opera://extensions/</code> or type
+      <code>ctrl-shift-E</code>.
+     </li>
+     <li>Find this extension in the list.</li>
+     <li>Click &quot;Options&quot;.</li>
+    </ol>
+  </div>
+  -->
+<!--
+   <h3 class="Safari">Safari</h3>
+   <div>
+    <ol>
+     <li>
+      Open <code>Safari &rarr; Preferences...</code> by typing
+      <code>cmd ,</code>
+     </li>
+     <li>Click <code>Extensions</code>.</li>
+     <li>Find this extension in the list.</li>
+     <li>Click the box to practice uploading.</li>
+    </ol>
+   </div>
+-->
+  </div>
+
+  <h2 id="help">Help</h2>
+  <ul>
+   <li>
+    CILT (or other tech support) will not be able to help you use
+    this extension.  They will be able to help you do the following:
+    <ul>
+     <li>Install a browser extension.</li>
+    </ul>
+    <ol>
+     <li>1. Create a Blackboard Smart View with the columns
+      <ul>
+       <li>&quot;Last Name&quot;</li>
+       <li>&quot;First Name&quot;</li>
+       <li>&quot;Username&quot;</li>
+       <li>&quot;Student ID (EMPLID)&quot;</li>
+       <li>Designated (or named) &quot;External Grade&quot;</li>
+      </ul>
+     </li>
+     <li>3. Save an Excel file as a <code>.csv</code></li>
+    </ol>
+   </li>
+  </ul>
+
+  <h2 id="disclaimer">Disclaimers</h2>
+  <ul>
+   <li>
+    Use this at your own risk.  If your grades are not entered
+    properly, it is your fault and your responsibility.
+   </li>
+   <li>
+    This extension is not affiliated with or endorsed by NDUS or UND.
+   </li>
+  </ul>
+  <p>
+   If you have any difficulty, I may be able to help you out at
+   <a href="mailto:timothy.prescott.UND@gmail.com"
+                  >timothy.prescott.UND@gmail.com</a>.
+   I may also be on vacation, so again, use this at your own risk.
+  </p>
+ </body>
+</html>

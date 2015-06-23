@@ -1,0 +1,34 @@
+The manifest of a Chrome extension defines everything and how everything interacts.  After some standard information, the manifest sets up the following:
+
+* A link to an “Options” page, which pretends to be Campus Connection.
+* A background script to keep track of everything.
+* A page action (an icon in the address bar to launch popup.html).
+* A content script for every Campus Connection webpage.
+* A content script for every Blackboard webpage (on UND, NDSU, MSU, and VCSU).
+
+Initially, the content scripts check if their associated webpages have a grade book showing.  If so, they open a messaging port to the background script.  The background script notes that the tab has a grade book showing, and shows the page action icon.
+
+When the page action icon is clicked, it checks the background script to see which tabs have grade books showing.  It looks for one Campus Connection grade book webpage (or one that is the current tab) and one Blackboard grade book webpage (or one that is the current tab).  The popup then shows its options to the user:
+* upload a file to the Campus Connection grade book
+* download a file from the Blackboard grade book
+* transfer grade information from the Blackboard grade book to the Campus Connection grade book.
+(There’s also links to the instruction page and to the practice Campus Connection.)
+
+If the user picks “download” or “transfer”, the popup sends the appropriate message to the Blackboard content script.  This causes the Blackboard page to make sure it’s in Screen Reader Mode.  Then the extension looks at the available columns.  There should be a column marked as the external grade (or one named “External Grade”) with letter grades, and there should be a column “Student ID (EMPLID)” or “Username”.  If these columns are not present, the extension displays an error message.
+
+If the columns are present, the extension goes through each row of the Grade Center, and records any entries for “Last Name”, “First Name”, “Student ID (EMPLID)”, “Username”, and the external grade (marked or named).  All of the recorded information is assembled into a javascript object.  If Blackboard was originally not in Screen Reader Mode, the script exits back to the Interactive mode.
+
+If a download was originally selected, all of the information is sent back to the popup, along with the filename (similar to how Blackboard names its Grade Center downloaded files: gc_{TERMID}-{COURSEID}-{COURSENUMBER}_extgrade_YYYY-MM-DD-HH-MM-SS.csv).
+Then the file is offered for the user to download and save.
+
+If a transfer was originally selected, a new object with just the student id/username and grade is created, and sent to the popup.
+
+If a user selected a file for upload, that file is parsed to create an object with just the student id/username and grade.
+
+Once the popup has created the grade object (by transfer or upload), that object is messaged to Campus Connection.
+
+To enter the grades, the content script determines if “Display Unassigned Only” is checked, and if there is a “View All” or “View 100” option.  It attempts to choose these options.  Then for every row in the table, it looks at that row’s student id (or username).  If the student id (or username) is present in the grade object, then it enters that grade.  (If final grades are available, then U and F are not entered.)
+
+The extension keeps track of how many grades it entered (including U and F), how many students are listed, and how many grades it found in the file.  If these numbers are substantially different from each other, it shows a message, since there may have been a file mix up.
+
+Finally, if “Display Unassigned Only” was originally unchecked, the content script unchecks the box.
