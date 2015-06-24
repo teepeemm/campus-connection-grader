@@ -1,15 +1,17 @@
 {
     "title": "Campus Connection Grader",
     "name": "campus-connection-grader",
-    "author": "Timothy Prescott",
-    "main": "main",
-    "dependencies": ["api-utils", "addon-kit"],
-    "icon": "data/icon-48.png",
-    "description": "Loads grades into NDUS's Campus Connection. Click \"Preferences\" to practice without Campus Connection.",
-    "homepage": "http://arts-sciences.und.edu/math/faculty/timothy-prescott/ccg/",
-    "license": "CC-BY-SA-4.0(https://creativecommons.org/licenses/by-sa/4.0/)",
     "version": "3.0",
-    "id": "jid0-D481LY52meoKjpKWLyX0RRrbuAI",
+    "description": "Loads grades into NDUS's Campus Connection. Click \"Preferences\" to practice without Campus Connection.",
+    "main": "index.js",
+    "author": "Timothy Prescott",
+    "engines": {
+	"firefox": ">=38.0a1",
+	"fennec": ">=38.0a1"
+    },
+    "license": "CC-BY-SA-4.0 (https://creativecommons.org/licenses/by-sa/4.0/)"
+    "icon": "data/icon-48.png",
+    "homepage": "http://arts-sciences.und.edu/math/faculty/timothy-prescott/ccg/",
     "preferences": [ {
 	"label": "Practice",
 	"name": "practice",
