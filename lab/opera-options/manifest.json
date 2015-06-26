@@ -1,0 +1,8 @@
+{
+    "name": "Option Page Action",
+    "version": "0",
+    "manifest_version": 2,
+    "options_page": "options.html",
+    "background": { "scripts": [ "background.js" ] },
+    "page_action": {}
+}
