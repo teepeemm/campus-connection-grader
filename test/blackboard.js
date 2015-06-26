@@ -17,7 +17,15 @@ var backgroundPort;
 
 if ( /Grade Center/.test(document.title) ) {
     backgroundPort = chrome.runtime.connect({"name":"blackboard"});
-    backgroundPort.onMessage.addListener(downloadGrades);
+    backgroundPort.onMessage.addListener(messageHandler);
+}
+
+function messageHandler(message) {
+    if ( message.action ) {
+	downloadGrades(message);
+    } else {
+	throw message;
+    }
 }
 
 /** A message kicks blackboard.js into action. */
@@ -162,17 +170,46 @@ function create_transfer() {
     backgroundPort.postMessage({"upload":grade});
 }
 
-/** If the user requested the information for download, we construct the
- *  file's name and send everything to background.js, which has access to
- *  Papa to build the csv. */
+/** If the user requested the information for download, we create the link for
+ *  downloading and click it. */
 function create_download() {
-    backgroundPort
-	.postMessage({"download":tableData,"filename":getFileName()});
+    var downloader = document.createElement("a");
+    downloader.setAttribute("download",getFileName());
+    downloader.setAttribute("style","display:none");
+    downloader.setAttribute("href",
+			    "data:text/csv;charset=utf-8,"+getFileData());
+    document.body.appendChild(downloader);
+    downloader.click();
+    document.body.removeChild(downloader);
 }
 
+/** Turns the json data into the appropriate csv. */
+function getFileData() {
+    if ( colKey["Student ID (EMPLID)"] ) {
+	tableData.forEach(function(studentInfo) {
+	    studentInfo["Student ID (EMPLID)"]
+		= '"'+studentInfo["Student ID (EMPLID)"]+'"';
+	});
+    }
+    var infoUsed = info.filter(function(header) {
+	return header in colKey;
+    });
+    infoUsed.push("External Grade");
+    var output = tableData.map(function(studentInfo) {
+	return infoUsed.map(function(header) {
+	    return studentInfo[header];
+	}).join(',');
+    }).sort();
+    output.unshift(infoUsed.map(function(header) {
+	return header === "Student ID (EMPLID)" ? "Student ID" : header;
+    }).join(','));
+    return escape(output.join('\n'));
+}
+
+/** The file name has the form
+ *  gc_TERM-COURSE(-SECTIONID)_extgrade_YYYY-MM-DD-HH-MM-SS.csv
+ *  eg: gc_1430-MATH103(-11388?)_extgrade_2014-02-01-10-55-02.csv */
 function getFileName() {
-    //   gc_TERM-COURSE(-SECTIONID)_extgrade_YYYY-MM-DD-HH-MM-SS.csv
-    // eg: gc_1430-MATH103(-11388?)_extgrade_2014-02-01-10-55-02.csv
     var fileName = "gc_";
     fileName += document.getElementById("courseMenu_link").textContent
 	.replace(/.*\(/g,"").replace(")","");

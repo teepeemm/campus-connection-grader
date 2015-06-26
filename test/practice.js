@@ -1,4 +1,4 @@
-/** Override campusConnect#setGrade(trow) */
+/** Override campusConnect.js#setGrade(trow) */
 function setGrade(trow,index) {
     var table = trow.parentElement;
     // only do this on the last pass through the table
@@ -44,3 +44,9 @@ document.getElementById("DERIVED_SR_RSTR_DSP_UNGRD_ONLY$0")
     .addEventListener("change",wait);
 document.getElementById("GRADE_ROSTER$fviewall$0")
     .addEventListener("click",wait);
+
+/* Opera specific directions. */
+if ( /OPR/.test(navigator.userAgent) ) {
+    document.getElementById("operaOnly").style.display = "list-item";
+    document.getElementById("bbPreface").textContent = "Choose";
+}
