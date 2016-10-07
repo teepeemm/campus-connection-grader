@@ -7,69 +7,72 @@ var grade;
 /** Column header in the csv that holds pertinent information. */
 var gradeColName, studentIdColName;
 
-var backgroundWindow = chrome.extension.getBackgroundPage();
+/** We could call chrome.extension.getBackgroundPage() to do this
+ *  synchronously, but Firefox can't.  So we'll do this asynchronously to help
+ *  make the versions more similar. */
+var poster = emitConnect("popup",messageHandler);
 
-/** Message port to content script. */
-var bbPort = bestPort(backgroundWindow.ports.blackboard),
-    ccPort = bestPort(backgroundWindow.ports.campusConnection);
-
-backgroundWindow.ccPort = ccPort;
-
-/** This script already has access to Papa, so we have blackboard.js message
- *  the information and build the download file here. */
-backgroundWindow.createDownload = function(message) {
-    var outputString
-	= escape(Papa.unparse(Array.prototype.slice.call(message.download,0),
-			      {"quotes":true}));
-    // apparently, message.download isn't treated as an array without the slice
-    var downloader = document.createElement("a");
-    downloader.setAttribute("download",message.filename);
-    downloader.setAttribute("style","display:none");
-    downloader.setAttribute("href",
-			    "data:text/csv;charset=utf-8,"+outputString);
-    document.body.appendChild(downloader);
-    downloader.click();
-    document.body.removeChild(downloader);
-}
-
-/* Toggling screen reader mode is a page navigation, which causes the content
- * script to reboot.  By setting background.js#bbState, when blackboard.js
- * reconnects its port, background.js will remind blackboard.js what it's
- * supposed to be doing. */
 document.getElementById("download_button")
     .addEventListener("click",function() {
-	backgroundWindow.bbState = "download";
-	bbPort.postMessage({"action":"download"});
-});
+	console.log("dest:blackboard, action:download");
+	poster({"dest":"blackboard","action":"download"});
+    });
+//		      poster.bind(undefined,{"dest":"blackboard",
+//					    "action":"download"}));
 document.getElementById("transfer_button")
     .addEventListener("click",function() {
-	backgroundWindow.bbState = "transfer";
-	bbPort.postMessage({"action":"transfer"});
-});
+	console.log("dest:blackboard, action:transfer");
+	poster({"dest":"blackboard","action":"transfer"});
+    });
+//		      poster.bind(undefined,{"dest":"blackboard",
+//						     "action":"transfer"}));
 document.getElementById("upload_input").addEventListener("change",loadFile);
 
-if ( ! chrome.runtime.openOptionsPage ) {
-    chrome.runtime.openOptionsPage
-	= open.bind(undefined,chrome.runtime.getURL('practice.html'));
+var openPractice;
+if ( typeof(chrome)!=="undefined" && chrome.runtime ) {
+    if ( chrome.runtime.openOptionsPage ) {
+	console.log("chrome new open");
+	openPractice = function() {
+	    chrome.runtime.openOptionsPage();
+	};
+	// can't use chrome.runtime.openOptionsPage instead of anonymous
+	// function, because Chrome passes the Event object and Chrome expects
+	// a callback.  It's longer to use
+	// chrome.runtime.openOptionsPage.bind(chrome.runtime,function(){})
+    } else {
+	console.log("chrome old open");
+	openPractice = open.bind(undefined,
+				 chrome.runtime.getURL('practice.html'));
+    }
+} else { // Firefox
+    console.log("firefox open");
+    openPractice = poster.bind(undefined,{"action":"openPractice"});
 }
-document.getElementById("practice").addEventListener("click",function() {
-    chrome.runtime.openOptionsPage();
-    // can't just use chrome.runtime.openOptionsPage instead of the anonymous
-    // function, because Chrome passes the Event object and Chrome expects
-    // to get a function callback.  To get around that, we'd have to
-    // bind(chrome.runtime,function(){}), which is longer than what we have.
-});
+document.getElementById("practice").addEventListener("click",
+						     function() {console.log("openpractice");openPractice();});
 
-/** The button/inputs are initially display:none. */
-if ( ccPort ) {
-    document.getElementById("upload").style.display = "inline";
+function messageHandler(message) {
+    console.log("popup.js");
+    console.log(message);
+    // popup is initialized once by Firefox,
+    // so the display has to be reset everytime
+    document.getElementById("upload").style.display = "none";
+    document.getElementById("download").style.display = "none";
+    document.getElementById("transfer").style.display = "none";
+    if ( message.ccPort ) {
+	document.getElementById("upload").style.display = "inline";
+    }
+    if ( message.bbPort ) {
+	document.getElementById("download").style.display = "inline";
+    }
+    if ( message.ccPort && message.bbPort ) {
+	document.getElementById("transfer").style.display = "inline";
+    }
 }
-if ( bbPort ) {
-    document.getElementById("download").style.display = "inline";
-}
-if ( ccPort && bbPort ) {
-    document.getElementById("transfer").style.display = "inline";
-}
+
+/** The only reason this script is running is because the popup was opened.
+ *  We need to determine which of the buttons to show. */
+poster({"action":"getState"});
 
 function loadFile(event) {
     Papa.parse(event.target.files[0],
@@ -122,7 +125,7 @@ function removeErrors(results) {
 	     && error.message.endsWith("but parsed 1")
 	     && results.data[error.row][results.meta.fields[0]].trim() === ''
 	   ) {
-	    results.errors.splice(index,1);
+	    results.errors.splice(index,1); // remove the error from the list
 	    return error.row;
 	} else {
 	    return -1;
@@ -130,7 +133,7 @@ function removeErrors(results) {
     }).filter(function(row) {
 	return row >= 0;
     }).sort().reverse().forEach(function(row) {
-	results.data.splice(row,1);
+	results.data.splice(row,1); // remove the blank row
     });
 }
 
@@ -176,7 +179,7 @@ function parseRows(results) {
     if ( results.errors.length ) {
 	showErrorCount(results.errors.length,results.data.length);
     }
-    ccPort.postMessage({"action":"upload","upload":grade});
+    poster({"dest":"campusConnection","action":"upload","upload":grade});
 }
 
 /** If we're using EmplIds as keys, we need to make sure they're 0 padded. */
@@ -194,33 +197,8 @@ function showErrorCount(numErrors,numRows) {
 	  +"an additional "+numErrors+" rows that were not processed.");
 }
 
-/** If there's only one port, that's the best one.  If there's more than one,
- *  we hope that one is highlighted.  Otherwise, we don't know which to use
- *  and return false.  We also use this time to remove undefined ports
- *  (but so do background.js, so maybe this is unnecessary?). */
-function bestPort(ports) {
-    var highlightedPorts = [],
-	definedPorts = [];
-    for ( var tabId in ports ) {
-	if ( ports[tabId] ) {
-	    definedPorts.push(ports[tabId]);
-	    if ( ports[tabId].sender.tab.highlighted ) {
-		highlightedPorts.push(ports[tabId]);
-	    }
-	} else {
-	    delete ports[tabId];
-	}
-    }
-    if ( definedPorts.length === 1 ) {
-	return definedPorts[0];
-    }
-    if ( highlightedPorts.length === 1 ) {
-	return highlightedPorts[0];
-    }
-    return false;
-}
-
-/** The first element in the array that matches the given regular expression. */
+/** The first element in the array that matches the given regular expression.
+ */
 function firstMatch(array,regex) {
     return array.filter(RegExp.prototype.test.bind(regex))[0];
 }

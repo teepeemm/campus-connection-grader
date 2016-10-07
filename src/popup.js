@@ -1,3 +1,5 @@
+/* global chrome, Papa */
+
 "use strict";
 
 /** An object with keys "mailto:username@" or "Student ID #" and
@@ -63,6 +65,7 @@ document.getElementById("practice").addEventListener("click",function() {
 /** The button/inputs are initially display:none. */
 if ( ccPort ) {
     document.getElementById("upload").style.display = "inline";
+    document.getElementById("cantupload").style.display = "none";
 }
 if ( bbPort ) {
     document.getElementById("download").style.display = "inline";

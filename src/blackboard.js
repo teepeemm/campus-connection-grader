@@ -1,3 +1,5 @@
+/* global chrome */
+
 "use strict";
 
 /** A boolean flag. */
@@ -20,12 +22,13 @@ if ( /Grade Center/.test(document.title) ) {
     backgroundPort.onMessage.addListener(downloadGrades);
 }
 
-/** A message kicks blackboard.js into action. */
+/** A message kicks blackboard.js into action.
+ *  @param message The message that was received */
 function downloadGrades(message) {
     if ( /Screen Reader Mode Active/.test(document.title) ) {
 	whenReady(message);
     } else {
-	toggleScreenReaderMode()
+	toggleScreenReaderMode();
     }
 }
 
@@ -43,7 +46,7 @@ function whenReady(message) {
 	    alert(e);
 	} finally {
 	    if ( message.exitScreenReader ) {
-		toggleScreenReaderMode()
+		toggleScreenReaderMode();
 	    }
 	}
     } else {
@@ -190,7 +193,8 @@ function getFileName() {
 }
 
 /** Make sure a one digit input has a leading zero.  This would be harder if
- *  input or output needed to be arbitrarily big. */
+ *  input or output needed to be arbitrarily big.
+ *  @param input The one or two digit number. */
 function twoDigits(input) {
     return ("0"+input).slice(-2);
 }

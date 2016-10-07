@@ -1,8 +1,3 @@
-To do:
-* create flowchart of code
-* how many people use it this time
-
-
 To update:
 
 Update version number in user.js

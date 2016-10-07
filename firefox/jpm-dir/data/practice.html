@@ -47,6 +47,9 @@
         font-size: 300%;
         line-height: 0;
     }
+    #operaOnly {
+        display: none;
+    }
   </style>
  </head>
  <body>
@@ -60,7 +63,11 @@
   </p>
   <div id="instructions">
    <h2>Instructions</h2>
-   <ul>
+   <ul id="instructionsList">
+    <li id="operaOnly">
+     (Opera only) First, open a single Blackboard Grade Center
+     and switch to that tab for the remaining instructions.
+    </li>
     <li>
      Click the
      <img src="images/page-icon-19.png" alt="ABCDFISU">
@@ -72,7 +79,7 @@
      properly to Campus Connection.
     </li>
     <li>
-     If a Blackboard Grade Center is open, choose
+     <span id="bbPreface">If a Blackboard Grade Center is open, choose</span>
      &quot;Download Grades&quot; to download a .csv file that could
      be uploaded to Campus Connection.
     </li>
@@ -113,6 +120,7 @@
     </tr>
    </table>
   </form>
+  <script src="message-framework.js"></script>
   <script src="campusConnect.js"></script>
   <script src="practice.js"></script>
  </body>

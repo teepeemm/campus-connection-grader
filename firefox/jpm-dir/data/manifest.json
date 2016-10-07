@@ -29,7 +29,7 @@
     "content_scripts": [
         {
             "matches": [ "https://studentadmin.connectnd.us/*" ],
-            "js": [ "campusConnect.js" ],
+            "js": [ "message-framework.js", "campusConnect.js" ],
             "all_frames": true
         },
         {
@@ -39,7 +39,7 @@
                 "https://bb.vcsu.edu/*",
 		"https://minotstateu.blackboard.com/*"
             ],
-            "js": [ "blackboard.js" ],
+            "js": [ "message-framework.js", "blackboard.js" ],
             "all_frames": true
         }
     ]

@@ -13,13 +13,16 @@ var pageContainer, table, unassignedBox;
  *  values "grade". */
 var grade;
 
+var poster;
+
 initialize();
 
 if ( unassignedBox && table && table.querySelector('select') ) {
-    chrome.runtime.connect({"name":"campusConnection"})
-	.onMessage.addListener(prepareToGrade);
+    // assignment only for debugging purposes
+    poster = emitConnect("campusConnection",prepareToGrade);
+    console.log("registered campusConnection");
+    console.log(poster);
 }
-
 
 /** Sets up the page's variables. */
 function initialize() {
@@ -52,7 +55,7 @@ function inOrder() {
 	arguments[0]();
 	funcStaller(Array.prototype.slice.call(arguments,1));
 	// this boxes arguments into an array,
-	// so they're not longer individual items
+	// so they're no longer individual items
     }
 }
 

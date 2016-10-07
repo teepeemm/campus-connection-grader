@@ -10,7 +10,7 @@
     div, select, p {
         margin: 2ex 1em;
     }
-    span, select {
+    #upload, #download, #transfer, select {
         display: none;
     }
     span, a {
@@ -23,6 +23,9 @@
  </head>
  <body>
   <div>
+   <span id="cantupload">
+    Open a Campus Connection grade roster in order to upload grades.
+   </span>
    <span id="upload">
     <label>Upload .csv grades
      <input id="upload_input" type="file">
@@ -30,6 +33,9 @@
    </span>
   </div>
   <div>
+   <span id="cantdownload">
+    Open a Blackboard grade roster in order to download grades.
+   </span>
    <span id="download">
     <button id="download_button">Download grades</button>
    </span>

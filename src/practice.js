@@ -1,4 +1,8 @@
-/** Override campusConnect#setGrade(trow) */
+/* global useEmplId, grade, successes, entries, midtermGrades */
+
+/** Override campusConnect#setGrade(trow)
+ *  @param trow The html row in question
+ *  @param index Which row in the table */
 function setGrade(trow,index) {
     var table = trow.parentElement;
     // only do this on the last pass through the table

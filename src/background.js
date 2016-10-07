@@ -1,3 +1,5 @@
+/* global chrome */
+
 "use strict";
 
 /** {tabid:port} for each port opened by the content scripts. */
@@ -16,7 +18,8 @@ var bbState = undefined;
 var createDownload;
 
 /** Turns things over to #register(port).  But first it may need to set
- *  port.sender.tab */
+ *  port.sender.tab
+ *  @param port The port registering the connection */
 chrome.runtime.onConnect.addListener(function(port) {
     // the new options_ui doesn't have port.sender.tab
     if ( port.sender.tab && port.sender.tab.id ) {
@@ -40,7 +43,8 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
 });
 
-/** Puts port into the appropriate spot in ports. */
+/** Puts port into the appropriate spot in ports.
+ *  @param port The port to register */
 function register(port) {
     var name = port.name,
 	tabId = port.sender.tab.id;

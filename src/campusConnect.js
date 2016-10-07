@@ -1,3 +1,5 @@
+/* global chrome */
+
 "use strict";
 
 /** A boolean flag. */
@@ -98,7 +100,8 @@ function setGrades() {
     warnings(entries,successes,Object.keys(grade).length);
 }
 
-/** Overriden in practice.js. */
+/** Overriden in practice.js.
+ *  @param trow The html row that we want to set. */
 function setGrade(trow) {
     var selector = trow.querySelector("select");
     if ( selector ) {
