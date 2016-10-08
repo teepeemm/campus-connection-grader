@@ -49,6 +49,9 @@ function prepareToGrade(message) {
     }
 }
 
+/** Executes the functions it's been given in the order they were given.
+ *  Uses {@link #funcStaller(array)} to waits for Campus Connection to be ready
+ *  before running each function. */
 function inOrder() {
     if ( arguments.length > 0 ) {
 	arguments[0]();
@@ -58,6 +61,9 @@ function inOrder() {
     }
 }
 
+/** Calls itself until Campus Connection is ready, at which point it returns to
+ *  {@link #inOrder()}.
+ *  @param {Array[function]} funcArray The functions to call, in order. */
 function funcStaller(funcArray) {
     if ( document.getElementById("WAIT_win0").style.display === "none" ) {
 	// funcArray is an array, so we need apply, not call
@@ -67,6 +73,7 @@ function funcStaller(funcArray) {
     }
 }
 
+/** Clicks the "show all" button. */
 function showAll() {
     initialize();
     var viewAll = document.getElementById("GRADE_ROSTER$fviewall$0");
@@ -75,11 +82,14 @@ function showAll() {
     }
 }
 
+/** Toggles the "Show Only Unassigned" box. */
 function toggleUnassigned() {
     initialize();
     unassignedBox.click();
 }
 
+/** Clicks the "Save" button, to remove the warning that nothing has been saved.
+ */
 function save() {
     initialize();
     document.getElementById("DERIVED_AA2_SAVE_PB").click();
@@ -93,7 +103,7 @@ function setGrades() {
     var gradeOptions = pageContainer
 	.querySelectorAll('select#DERIVED_SR_GRD_RSTR_TYPE_SEQ option');
     midtermGrades = gradeOptions.length === 1
-	&& /Mid.?Term ?Grade/i.test(gradeOptions.textContent);
+	&& /Mid.?Term ?Grade/i.test(gradeOptions[0].textContent);
     successes = 0;
     entries = 0;
     Array.prototype.slice.call(table.rows,1,-1).forEach(setGrade);
@@ -121,13 +131,18 @@ function setGrade(trow) {
     }
 }
 
+/** Displays a warning if the number of grades doesn't seem right.
+ * 
+ * @param {int} entries The number of entries in the grade roster
+ * @param {int} successes The number of grades (that could be) entered into the grade roster
+ * @param {int} gradesAvailable The number of grades found in the csv. */
 function warnings(entries,successes,gradesAvailable) {
     var manyBlanks = (entries-successes) > ( successes/4 );
     var manyUnused = ( (gradesAvailable-successes) > ( successes/4 ) )
-	|| ( gradesAvailable < entries );
+	|| ( gradesAvailable < entries/4 );
     var message;
     if ( manyUnused && manyBlanks ) {
-	message = "There were discrepancies between the grade rosters.  "
+	message = "There were many discrepancies between the grade rosters.  "
 	    +"This may mean that you loaded the wrong course.  "
 	    +'Click "Ok" to keep the grades, or '
 	    +'"Cancel" to remove all grades.';
@@ -136,13 +151,13 @@ function warnings(entries,successes,gradesAvailable) {
 	}
     } else if ( manyUnused || manyBlanks ) {
 	if ( manyUnused ) {
-	    message = "There were grades in the file that were not "
+	    message = "There were many grades in the file that were not "
 		+"uploaded. This may mean that you are only viewing a "
 		+"portion of your students in Campus Connection.  "
 		+"When you are viewing more "
 		+'students, click the button "Reload Grades".';
 	} else {
-	    message = "There are grades in Campus Connection left to fill "
+	    message = "There are many grades in Campus Connection left to fill "
 		+"in.  This may mean that you only uploaded a portion of "
 		+"your entire course.";
 	}
@@ -150,6 +165,8 @@ function warnings(entries,successes,gradesAvailable) {
     }
 }
 
+/** Removes any grade from a row in the grade roster.
+ * @param selector The select widget for entering grades. */
 function blankRow(selector) {
     selector.selectedIndex = 0;
 }

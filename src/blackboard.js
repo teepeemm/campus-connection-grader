@@ -17,13 +17,16 @@ var info = ["Last Name","First Name","Username","Student ID (EMPLID)"];
 /** Port to send and receive messages with background.js and popup.js. */
 var backgroundPort;
 
+var primaryGradeRE = /^([ABCDFISU][+-]?).*$/,
+    secondaryGradeRE = /^.*\(([ABCDFISU][+-]?)\)$/;
+
 if ( /Grade Center/.test(document.title) ) {
     backgroundPort = chrome.runtime.connect({"name":"blackboard"});
     backgroundPort.onMessage.addListener(downloadGrades);
 }
 
 /** A message kicks blackboard.js into action.
- *  @param message The message that was received */
+ *  @param {object} message The message that was received */
 function downloadGrades(message) {
     if ( /Screen Reader Mode Active/.test(document.title) ) {
 	whenReady(message);
@@ -32,6 +35,9 @@ function downloadGrades(message) {
     }
 }
 
+/** Stalls until Blackboard is ready, and then executes a function determined
+ *  by the message.
+ * @param {object} message either {action:'download'} or {action:'transfer'} */
 function whenReady(message) {
     if ( document.getElementById("loadstatus").style.display === "none" ) {
 	try {
@@ -124,14 +130,12 @@ function determineExtGradeCol() {
 	    var colEntries = tableData.map(function(studentInfo) {
 		return studentInfo[colNames[name]];
 	    });
-	    if ( colEntries.every(RegExp.prototype.test
-				  .bind(/^[ABCDFISU][+-]?(\s.*)?$/)) ) {
+	    if ( colEntries.every(RegExp.prototype.test.bind(primaryGradeRE)) ) {
 		usePrimary = true;
 		useMarked = colNames[name]==="extGradeMarked";
 		return;
 	    }
-	    if ( colEntries.every(RegExp.prototype.test
-				  .bind(/.+\s\([ABCDFISU][+-]?\)$/)) ) {
+	    if ( colEntries.every(RegExp.prototype.test.bind(secondaryGradeRE)) ) {
 		usePrimary = false;
 		useMarked = colNames[name]==="extGradeMarked";
 		return;
@@ -147,8 +151,8 @@ function getLetterGrade() {
     tableData.forEach(function(studentInfo) {
 	var grade = studentInfo[useMarked?"extGradeMarked":"extGradeNamed"];
 	studentInfo["External Grade"] = usePrimary ?
-	    grade.split(" ",2)[0] :
-	    grade.replace(/^.+\s\(([^()]+)\)$/,"$1");
+	    grade.replace(primaryGradeRE,"$1") :
+	    grade.replace(secondaryGradeRE,"$1");
 	delete studentInfo[useMarked?"extGradeMarked":"extGradeNamed"];
     });
 }
@@ -194,7 +198,7 @@ function getFileName() {
 
 /** Make sure a one digit input has a leading zero.  This would be harder if
  *  input or output needed to be arbitrarily big.
- *  @param input The one or two digit number. */
+ *  @param {String} input The one or two digit number. */
 function twoDigits(input) {
     return ("0"+input).slice(-2);
 }

@@ -18,7 +18,8 @@ var bbPort = bestPort(backgroundWindow.ports.blackboard),
 backgroundWindow.ccPort = ccPort;
 
 /** This script already has access to Papa, so we have blackboard.js message
- *  the information and build the download file here. */
+ *  the information and build the download file here.
+ *  @param {object} message The message object that was received */
 backgroundWindow.createDownload = function(message) {
     var outputString
 	= escape(Papa.unparse(Array.prototype.slice.call(message.download,0),
@@ -32,7 +33,7 @@ backgroundWindow.createDownload = function(message) {
     document.body.appendChild(downloader);
     downloader.click();
     document.body.removeChild(downloader);
-}
+};
 
 /* Toggling screen reader mode is a page navigation, which causes the content
  * script to reboot.  By setting background.js#bbState, when blackboard.js
@@ -69,11 +70,14 @@ if ( ccPort ) {
 }
 if ( bbPort ) {
     document.getElementById("download").style.display = "inline";
+    document.getElementById("cantdownload").style.display = "none";
 }
 if ( ccPort && bbPort ) {
     document.getElementById("transfer").style.display = "inline";
 }
 
+/** Called when a file is chosen.
+ * @param {Event} event The "chose file" event */
 function loadFile(event) {
     Papa.parse(event.target.files[0],
 	       {
@@ -84,6 +88,11 @@ function loadFile(event) {
 	       }); // no need to stream, file is 50b/student
 }
 
+/** Called when there is an error processing the csv file.
+ * 
+ * @param {Error} err The error that occured.
+ * @param {File} file The file object that cause the error
+ * @param inputElem The input[type=file] widget */
 function onError(err,file,inputElem) {
     console.log(err);
     console.log(file);
@@ -93,13 +102,16 @@ function onError(err,file,inputElem) {
     myalert("Error loading: "+err.name);
 }
 
+/** Parses the csv object into the grades object for passing to Campus Connection.
+ * 
+ * @param {object} results PapaParse's parsing of the csv file */
 function loadGrades(results) {
     try {
 	if ( results.errors ) {
 	    removeErrors(results);
 	}
 	grade = {}; // remove existing grades
-	getIdColumn(results);
+	getIdColumn(results.meta.fields);
 	gradeColName = firstMatch(results.meta.fields,/External ?Grade/i);
 	if ( gradeColName ) {
 	    parseRows(results);
@@ -118,7 +130,8 @@ function loadGrades(results) {
  *  Reversing the arrays should mean we go through them backward,
  *  allowing us to delete entries without messing up later parsing.
  *  This could all be in a results.errors.reverse().forEach(),
- *  but that assumes Papa puts the errors in order. */
+ *  but that assumes Papa puts the errors in order.
+ *  @param results The results of the parsing */
 function removeErrors(results) {
     results.errors.reverse().map(function(error,index) {
 	if ( error.type === "FieldMismatch" && error.code === "TooFewFields"
@@ -137,11 +150,14 @@ function removeErrors(results) {
     });
 }
 
-function getIdColumn(results) {
-    studentIdColName = firstMatch(results.meta.fields,/Student ?ID/i)
-	|| firstMatch(results.meta.fields,/Username/i);
+/** Determines the column to identify students from the parsed data.  We look
+ *  for a column titled "Student ID" (preferred) or "Username".
+ * @param {Array[string]} fields The fields that were found in the first row */
+function getIdColumn(fields) {
+    studentIdColName = firstMatch(fields,/Student ?ID/i)
+	|| firstMatch(fields,/Username/i);
     if ( ! studentIdColName ) {
-	if ( results.meta.fields.join('').trim() === '' ) {
+	if ( fields.join('').trim() === '' ) {
 	    throw 'The csv must begin with the column headers, '
 		+'not empty lines.';
 	} else {
@@ -152,7 +168,8 @@ function getIdColumn(results) {
 }
 
 /** If the csv didn't have an "External Grade" column, ask the user to pick
- *  which column to use for the grade. */
+ *  which column to use for the grade.
+ *  @param {object} results The results of the csv parsing. */
 function selectGradeColName(results) {
     var select = document.getElementById("select");
     results.meta.fields.forEach(function(colTitle) {
@@ -169,7 +186,7 @@ function selectGradeColName(results) {
 }
 
 /** Take the parsed csv and build the grade object to post to campusConnect.js.
- */
+ *  @param {object} results The results of the csv parsing */
 function parseRows(results) {
     results.data.forEach(function(row) {
 	if ( /^[ABCDFISU][+-]?$/.test(row[gradeColName].trim()) ) {
@@ -182,7 +199,8 @@ function parseRows(results) {
     ccPort.postMessage({"action":"upload","upload":grade});
 }
 
-/** If we're using EmplIds as keys, we need to make sure they're 0 padded. */
+/** If we're using EmplIds as keys, we need to make sure they're 0 padded.
+ *  @param {object} row A row from the csv file, as an object */
 function getRowKey(row) {
     var rowKey = row[ studentIdColName ];
     if ( /Student ?ID/i.test(studentIdColName) ) {
@@ -191,6 +209,9 @@ function getRowKey(row) {
     return rowKey;
 }
 
+/** Displays the number of errors.
+ *  @param {int} numErrors The number of errors encountered
+ *  @param {int} numRows The number of rows processed */
 function showErrorCount(numErrors,numRows) {
     myalert("There were "+numRows+" rows that were processed "
 	  +"(resulting in "+Object.keys(grade).length+" grades), and "
@@ -200,7 +221,8 @@ function showErrorCount(numErrors,numRows) {
 /** If there's only one port, that's the best one.  If there's more than one,
  *  we hope that one is highlighted.  Otherwise, we don't know which to use
  *  and return false.  We also use this time to remove undefined ports
- *  (but so do background.js, so maybe this is unnecessary?). */
+ *  (but so do background.js, so maybe this is unnecessary?).
+ *  @param {object} ports The object of ports that are in use. */
 function bestPort(ports) {
     var highlightedPorts = [],
 	definedPorts = [];
@@ -223,7 +245,9 @@ function bestPort(ports) {
     return false;
 }
 
-/** The first element in the array that matches the given regular expression. */
+/** The first element in the array that matches the given regular expression.
+ *  @param array The array of strings to search
+ *  @param regex The regular expression to use as a test */
 function firstMatch(array,regex) {
     return array.filter(RegExp.prototype.test.bind(regex))[0];
 }
@@ -231,7 +255,8 @@ function firstMatch(array,regex) {
 /** Javascript's usual alert is modal.  That steals the focus from the popup.
  *  When the popup looses focus, it closes.  When the popup closes, the script
  *  that triggered the alert is gone, so the alert closes.  All of this
- *  happens in less than a second, and there's no time to read the message. */
+ *  happens in less than a second, and there's no time to read the message.
+ *  @param {String} message The message to display */
 function myalert(message) {
     var out = document.createElement("p");
     out.setAttribute("style","color:red");

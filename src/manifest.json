@@ -1,6 +1,6 @@
 {
     "name": "Campus Connection Grader",
-    "version": "3.0",
+    "version": "4.0",
     "author": "Timothy Prescott",
     "manifest_version": 2,
     "description": "Loads grades from Blackboard into NDUS's Campus Connection. To practice when Campus Connection isn't available, click 'Options'.",
@@ -18,7 +18,7 @@
 	"scripts": [ "background.js" ],
 	"persistent": false
     },
-    "page_action": {
+    "browser_action": {
 	"default_icon": {
 	    "19": "images/page-icon-19.png",
 	    "38": "images/page-icon-38.png"
@@ -42,5 +42,6 @@
             "js": [ "blackboard.js" ],
             "all_frames": true
         }
-    ]
+    ],
+    "permissions": ["tabs"]
 }

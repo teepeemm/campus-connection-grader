@@ -2,7 +2,7 @@
 
 /** Override campusConnect#setGrade(trow)
  *  @param trow The html row in question
- *  @param index Which row in the table */
+ *  @param {int} index Which row in the table */
 function setGrade(trow,index) {
     var table = trow.parentElement;
     // only do this on the last pass through the table
@@ -32,10 +32,14 @@ function setGrade(trow,index) {
     });
 }
 
+/** Places failing grades in parentheses
+ *  @param {String} gradeIn The grade to examine
+ *  @returns {String} The (possibly parenthesized grade */
 function parenUF(gradeIn) {
     return (!midtermGrades && /U|F/.test(gradeIn)) ? '('+gradeIn+')' : gradeIn;
 }
 
+/** Pretends to stall like Campus Connection. */
 function wait() {
     document.getElementById("WAIT_win0").style.display = "block";
     setTimeout(function() {

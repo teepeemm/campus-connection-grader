@@ -19,7 +19,7 @@ var createDownload;
 
 /** Turns things over to #register(port).  But first it may need to set
  *  port.sender.tab
- *  @param port The port registering the connection */
+ *  @param {chrome.runtime.Port} port The port registering the connection */
 chrome.runtime.onConnect.addListener(function(port) {
     // the new options_ui doesn't have port.sender.tab
     if ( port.sender.tab && port.sender.tab.id ) {
@@ -44,17 +44,12 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 /** Puts port into the appropriate spot in ports.
- *  @param port The port to register */
+ *  @param {chrome.runtime.Port} port The port to register */
 function register(port) {
     var name = port.name,
 	tabId = port.sender.tab.id;
     ports[name][tabId] = port;
     port.onDisconnect.addListener(function() {
-	chrome.tabs.get(tabId,function(tab) {
-	    if ( ! chrome.runtime.lastError ) {
-		chrome.pageAction.hide(tabId);
-	    } // else, the tab is already closed
-	});
 	delete ports[name][tabId];
     });
     if ( name === "blackboard" ) {
@@ -73,5 +68,4 @@ function register(port) {
 	}
     }
     // cc doesn't post messages, so we don't need onMessage.addListener
-    chrome.pageAction.show(tabId);
 }
