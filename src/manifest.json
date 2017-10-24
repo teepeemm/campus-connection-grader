@@ -1,6 +1,6 @@
 {
     "name": "Campus Connection Grader",
-    "version": "4.0",
+    "version": "5.0",
     "author": "Timothy Prescott",
     "manifest_version": 2,
     "description": "Loads grades from Blackboard into NDUS's Campus Connection. To practice when Campus Connection isn't available, click 'Options'.",
@@ -34,9 +34,14 @@
         },
         {
             "matches": [
-                "https://online.und.edu/*",
-                "https://bb.ndsu.nodak.edu/*",
+                "https://blackboard.ndus.edu/*",
+                "https://www.bismarckstate.online/*",
+                "https://online.lrsc.edu/*",
+                "https://online.ndscs.edu/*",
+                "https://online.willistonstate.edu/*",
                 "https://bb.vcsu.edu/*",
+                "https://blackboard.und.edu/*",
+                "https://bb.ndsu.nodak.edu/*",
 		"https://minotstateu.blackboard.com/*"
             ],
             "js": [ "blackboard.js" ],

@@ -77,7 +77,7 @@ function funcStaller(funcArray) {
 function showAll() {
     initialize();
     var viewAll = document.getElementById("GRADE_ROSTER$fviewall$0");
-    if ( /View ?(All|100)/i.test(viewAll.textContent) ) {
+    if ( viewAll && /View ?(All|100)/i.test(viewAll.textContent) ) {
 	viewAll.click();
     }
 }

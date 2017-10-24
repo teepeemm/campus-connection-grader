@@ -5,18 +5,24 @@ Provide new version to chrome & opera stores
 
 Chrome:
 https://chrome.google.com/webstore/developer/dashboard
-app id:
-difjakgijdlfdbmnfgkloecfikpiecfn
-url:
-https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn
+app id: difjakgijdlfdbmnfgkloecfikpiecfn
+url: https://chrome.google.com/webstore/detail/difjakgijdlfdbmnfgkloecfikpiecfn
 
 Opera:
 https://addons.opera.com/en/developer/
-app id:
-neiphapdimjialblhihiiiamefoblppe
-url:
-https://addons.opera.com/en/extensions/details/campus-connection-grader/
+app id: neiphapdimjialblhihiiiamefoblppe
+url: https://addons.opera.com/en/extensions/details/campus-connection-grader/
+but Opera doesn't work, because the file upload widget causes the popup to lose
+focus, so the popup closes, and then the upload widget closes
 
 
 Development extension:
 https://chrome.google.com/webstore/detail/gkjlobeiicbkomfoebemkbebdnaojiph/
+
+
+Firefox:
+for local testing:
+url: about:debugging
+if error, add to manifest: ,"applications": {"gecko": {"id": "my-extension@example.com"}}
+
+https://addons.mozilla.org/en-US/firefox/
